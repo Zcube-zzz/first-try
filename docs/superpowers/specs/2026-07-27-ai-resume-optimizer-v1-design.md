@@ -1,134 +1,155 @@
-﻿# AI Resume Optimizer V1 Design
+# AI 简历优化功能 V1 产品设计文档
 
-Date: 2026-07-27
-Status: Draft for user review
+日期：2026-07-27
+状态：待用户确认
 
-## Goal
+## 目标
 
-Build the first usable version of an AI resume optimization feature in the existing ShipAny SaaS project. V1 focuses on proving the core experience: users provide a resume, choose a target role, optionally provide a JD, then receive a resume diagnosis and a complete but basic optimized resume.
+在现有 ShipAny SaaS 脚手架中，实现第一版可用的 AI 简历优化功能。
 
-V1 deliberately does not include payment, credits, Word export, recruiter greeting generation, or recruiting-platform profile optimization. Those stay for V2.
+V1 的目标不是一次性做成完整 Resume Worded，而是先跑通核心体验：用户提供简历，选择目标岗位，可选粘贴 JD，然后获得一份完整简历诊断和一份基础版优化简历。
 
-## Product Scope
+V1 暂不做付费、积分扣费、Word 导出、招聘平台打招呼话术、招聘平台个人资料优化。这些能力放到 V2。
 
-### V1 Includes
+## 产品范围
 
-- Resume input by pasted text
-- Resume input by Word/PDF upload, with fallback to manual paste if parsing fails
-- Required target role selection or free-text target role
-- Optional JD input, strongly recommended in UI copy
-- Guest trial: one partial diagnosis only
-- Logged-in free experience: one complete diagnosis plus one complete Gemini quick optimized resume
-- Result page with complete optimized resume, modification notes, and facts/metrics that require user confirmation
-- Evolink model integration using local env settings
-- Built-in resume optimization prompt derived from the content-only resume optimization rules
+### V1 包含
 
-### V1 Excludes
+- 支持用户粘贴简历文本
+- 支持上传 Word / PDF 简历
+- 文件解析失败时，引导用户手动粘贴简历文本
+- 目标岗位必填：用户必须选择或填写一个求职目标岗位
+- JD 可选，但页面强提示“上传 JD 可获得更精准优化”
+- 游客可体验 1 次，但只展示部分诊断
+- 登录用户可获得 1 次完整免费体验
+- 登录免费体验包含：完整简历诊断 + Gemini 快速优化版简历
+- 结果页展示：完整优化简历、修改说明、需本人确认的事实或量化指标
+- 接入 Evolink 模型调用
+- 内置简历优化 prompt，参考当前 `resume-content-upgrade-word` 中“只做内容优化”的规则
 
-- Payment and credits
-- Claude paid deep refinement flow
-- Word DOCX export
-- PDF export
-- Resume version history beyond the current result
-- Recruiter greeting/message generation
-- Boss/Zhaopin/Liepin/LinkedIn profile optimization
-- Admin prompt editor
-- Complex before/after diff view
+### V1 不包含
 
-## User Flow
+- 支付系统
+- 积分扣费
+- Claude 深度精修付费流程
+- Word DOCX 导出
+- PDF 导出
+- 多版本简历历史
+- 招聘平台打招呼话术生成
+- BOSS / 智联 / 猎聘 / LinkedIn 个人资料优化
+- 后台 prompt 编辑器
+- 复杂的左右对比 diff 视图
 
-1. User opens the resume optimizer page.
-2. User provides resume content by either:
-   - Pasting resume text into a textarea
-   - Uploading a `.docx` or `.pdf` file
-3. If upload parsing fails, the page shows a clear fallback message and keeps the paste textarea available.
-4. User selects or types a target role. This is required.
-5. User optionally pastes a JD. The UI should say this improves matching quality.
-6. User chooses whether AI may add reasonable quantified facts that require confirmation. Default is off.
-7. User submits.
-8. Backend determines access mode:
-   - Guest: return partial diagnosis only
-   - Logged-in user with unused free experience: return full diagnosis and full Gemini quick optimized resume
-   - Logged-in user who already used free experience: return a gated message for V1, asking them to wait for the deep refinement / paid version
-9. Result page displays either the partial guest result or the full logged-in result.
+## 用户流程
 
-## Access Rules
+1. 用户进入简历优化页面
+2. 用户提供简历内容，方式二选一：
+   - 直接粘贴简历文本
+   - 上传 `.docx` 或 `.pdf` 文件
+3. 如果文件解析失败，页面提示“解析失败，可直接粘贴简历文本继续”
+4. 用户选择或填写目标岗位，目标岗位为必填项
+5. 用户可选粘贴 JD，页面提示 JD 会提升匹配质量
+6. 用户选择是否允许 AI 补充“需本人确认”的合理量化指标，默认关闭
+7. 用户点击生成
+8. 后端判断用户身份和权益：
+   - 游客：返回部分诊断，不返回完整优化简历
+   - 登录用户且未使用免费完整体验：返回完整诊断 + Gemini 快速优化版简历
+   - 登录用户且已使用免费完整体验：返回 V1 阶段的引导提示，告知深度精修将在后续版本开放
+9. 前端根据返回结果展示诊断和优化简历
 
-### Guest
+## 权益规则
 
-- One trial per browser, tracked by a local cookie
-- Guest result only includes partial diagnosis
-- Guest result should show enough value to encourage login, but not the full optimized resume
+### 游客
 
-Guest response includes:
+- 每个浏览器可体验 1 次
+- 使用 cookie 记录游客体验状态
+- 游客只展示部分诊断，不展示完整优化简历
+- 游客体验要能体现价值，但主要目标是引导登录
 
-- Overall score or grade
-- Top 3 issues
-- 1 sample rewritten bullet or paragraph
-- Login call-to-action
+游客结果包含：
 
-### Logged-In Free User
+- 总体评分或等级
+- Top 3 简历问题
+- 1 条示例改写
+- 登录引导按钮
 
-- One complete free experience per account
-- Uses Gemini quick model
-- Response includes complete diagnosis and complete optimized resume
+### 登录免费用户
 
-Logged-in response includes:
+- 每个账号可获得 1 次完整免费体验
+- 使用 Gemini 快速模型
+- 返回完整诊断和完整优化简历
 
-- Overall diagnosis
-- Section-level issues
-- Complete optimized resume
-- Modification notes
-- Facts/metrics requiring confirmation
+登录用户结果包含：
 
-### Paid / V2
+- 总体诊断
+- 分模块问题清单
+- 完整优化版简历
+- 修改说明
+- 需本人确认的事实或量化指标
 
-- Not implemented in V1
-- Future flow will use Claude Sonnet 5 for deep refinement and likely connect to ShipAny credits/payment
+### 付费能力
 
-## Model Strategy
+V1 不实现付费能力。
 
-V1 uses Evolink through server-side API calls only. The API key stays in `.env.development` / production env and is never exposed to the browser.
+V2 再考虑：
 
-Environment variables:
+- Claude Sonnet 5 深度精修
+- ShipAny credits 积分系统
+- 支付和积分包
+- Word 导出
+- 打招呼话术与平台资料优化
+
+## 模型策略
+
+V1 通过服务端调用 Evolink，API key 只保存在环境变量中，不暴露到浏览器。
+
+环境变量：
 
 - `EVOLINK_API_KEY`
 - `EVOLINK_BASE_URL`
 - `EVOLINK_FREE_MODEL`
 - `EVOLINK_PAID_MODEL`
 
-V1 model usage:
+当前本地开发配置：
 
-- Guest partial diagnosis: `EVOLINK_FREE_MODEL`, currently `gemini-3.5-flash-lite`
-- Logged-in complete diagnosis and quick optimized resume: `EVOLINK_FREE_MODEL`
-- Claude deep refinement: `EVOLINK_PAID_MODEL`, configured but not used until V2
+- 免费模型：`gemini-3.5-flash-lite`
+- 付费模型预留：`claude-sonnet-5`
+- Base URL：`https://direct.evolink.ai`
 
-Recommended long-term task split:
+V1 实际使用：
 
-- Text cleanup: Gemini Flash Lite
-- Resume structure extraction: Gemini Flash Lite
-- JD capability extraction: Gemini Flash Lite
-- Complete quick resume optimization: Gemini Flash Lite
-- Paid deep refinement: Claude Sonnet 5
-- Recruiter greeting and platform profile copy: Gemini for free/quick, Claude for paid/deep
+- 游客部分诊断：`EVOLINK_FREE_MODEL`
+- 登录用户完整诊断 + 快速优化简历：`EVOLINK_FREE_MODEL`
+- Claude 深度精修：V1 只配置，不调用
 
-## Prompt Design
+长期任务拆分建议：
 
-The V1 prompt should follow the `resume-content-upgrade-word` content strategy, adapted for website JSON output instead of Word DOCX.
+- 文本清洗：Gemini Flash Lite
+- 简历结构化抽取：Gemini Flash Lite
+- JD 能力标签提取：Gemini Flash Lite
+- 免费快速优化版简历：Gemini Flash Lite
+- 付费深度精修版简历：Claude Sonnet 5
+- 招聘平台打招呼话术：免费版 Gemini，付费版 Claude
+- 招聘平台个人资料优化：免费版 Gemini，付费版 Claude
 
-Core rules:
+## Prompt 设计
 
-- Preserve hard facts: name, school, degree, company, dates, certificates, awards, patents, role titles unless the user explicitly changes them
-- Do not invent AI projects or AI skills
-- Do not add tools or skills not supported by the original resume
-- Rewrite weak expressions such as “负责 / 参与 / 熟悉” into concrete “context + action + result” language
-- Use the target role or JD to extract 2-4 capability tags
-- For social candidates, include core advantages; for campus candidates, keep education early and avoid a standalone advantage section by default
-- Default output is a real delivery version: conservative facts, no unsupported metrics
-- If the user enables the advanced switch, the model may add reasonable quantified facts but must list them under “requires confirmation”
-- Avoid empty phrases such as “完整闭环能力”, “能力沉淀”, “可演示、可评估、可迭代”
+V1 prompt 参考 `resume-content-upgrade-word` 的内容优化策略，但输出形式改为网站可渲染的结构化 JSON，不做 Word 排版。
 
-Required model output should be strict JSON:
+核心规则：
+
+- 保留硬事实：姓名、学校、学历、公司、任职时间、证书、奖项、专利、岗位名称等不得乱改
+- 不新增用户原简历中没有出现过的 AI 项目或 AI 技能
+- 不因为 JD 出现某工具，就自动给用户添加该技能
+- 将“负责 / 参与 / 熟悉”等弱表达改写成“场景 + 动作 + 结果”
+- 根据目标岗位或 JD 提炼 2-4 个能力标签
+- 社招用户默认包含“核心优势”
+- 校招用户默认教育背景前置，不强行生成独立“核心优势”
+- 默认输出为真实投递版：只做表达优化，不补充无依据数字
+- 如果用户开启高级选项，AI 可补充合理量化指标，但必须列入“需本人确认”
+- 避免空话，如“完整闭环能力”“能力沉淀”“可演示、可评估、可迭代”
+
+模型必须返回严格 JSON：
 
 ```json
 {
@@ -175,171 +196,210 @@ Required model output should be strict JSON:
 }
 ```
 
-For guest partial results, `optimized_resume` may be omitted or only include a sample rewrite.
+游客部分诊断结果中，可以不返回 `optimized_resume`，或只返回 `sample_rewrite`。
 
-## Architecture
+## 页面设计
 
-### New Page
-
-Add a landing/console-style page for the feature, likely:
+新增一个简历优化工具页，建议路径：
 
 - `/[locale]/resume-optimizer`
 
-It should be a usable tool screen, not a marketing-only landing page.
+这个页面应该是工具页面，不是纯营销落地页。
 
-Page layout:
+页面结构：
 
-- Header/title area with concise promise
-- Input panel with target role, optional JD, resume text, file upload, advanced confirmation toggle
-- Submit button
-- Result panel with diagnosis and optimized resume sections
-- Login CTA for guest partial results
+- 顶部标题区：一句话说明功能，例如“上传简历，生成面向目标岗位的优化版本”
+- 输入区：
+  - 目标岗位选择 / 输入
+  - JD 粘贴框，可选
+  - 简历文本粘贴框
+  - Word / PDF 上传入口
+  - “允许补充需本人确认的量化指标”开关
+  - 生成按钮
+- 结果区：
+  - 简历诊断
+  - 优化版简历
+  - 修改说明
+  - 需确认事实
+  - 游客登录引导
 
-### Client Component
+## 前端组件设计
 
-Create a focused client component for the interactive form and result state.
+新增一个聚焦的客户端组件处理表单和结果状态。
 
-Responsibilities:
+组件职责：
 
-- Collect inputs
-- Upload file for extraction or send direct text
-- Show parsing errors and paste fallback
-- Call generation API
-- Render loading/error/success states
-- Open sign-in modal or link when guest result is gated
+- 收集用户输入
+- 处理文件上传和解析
+- 解析失败时展示粘贴文本兜底
+- 调用生成接口
+- 渲染加载、错误、成功状态
+- 游客部分结果后展示登录引导
+- 登录用户完整结果后展示完整优化简历
 
-### API Routes
+结果页不做复杂 diff，先做“完整简历 + 修改说明 + 需确认事实”。
 
-Add two V1 routes:
+## API 设计
 
-1. `POST /api/resume/parse`
+### `POST /api/resume/parse`
 
-Accepts multipart file upload.
+用于解析上传的 Word / PDF 文件。
 
-Returns:
+请求：
 
-```json
-{ "text": "extracted resume text", "filename": "..." }
-```
+- `multipart/form-data`
+- 字段名：`file`
 
-Supported file types:
+支持：
 
 - `.docx`
 - `.pdf`
 
-If parsing fails, return a friendly error and let UI fall back to paste.
+返回：
 
-2. `POST /api/resume/optimize`
+```json
+{
+  "text": "解析后的简历文本",
+  "filename": "resume.docx"
+}
+```
 
-Accepts:
+如果解析失败：
+
+```json
+{
+  "code": -1,
+  "message": "文件解析失败，你可以直接粘贴简历文本继续"
+}
+```
+
+### `POST /api/resume/optimize`
+
+用于生成诊断和优化简历。
+
+请求：
 
 ```json
 {
   "resumeText": "string",
   "targetRole": "string",
-  "jdText": "string optional",
+  "jdText": "string | null",
   "allowInferredMetrics": false
 }
 ```
 
-Server responsibilities:
+后端职责：
 
-- Validate required fields
-- Determine signed-in user via existing auth helpers
-- Determine guest/logged-in access mode
-- Call Evolink with `EVOLINK_FREE_MODEL`
-- Validate/repair JSON response if needed
-- Return shaped result
-- Record free usage if logged-in or guest cookie if guest
+- 校验目标岗位必填
+- 校验简历文本必填
+- 判断当前用户是否登录
+- 判断游客或登录用户权益
+- 构造 prompt
+- 调用 Evolink
+- 校验模型返回 JSON
+- 返回结构化结果
+- 记录游客体验或登录用户免费体验状态
 
-### Data Persistence
+## 数据存储
 
-V1 can be implemented with minimal persistence:
-
-- Guest trial: cookie-based tracking
-- Logged-in free usage: simple DB table or config-compatible usage table
-
-Recommended V1 DB table:
+V1 建议增加一张轻量使用记录表：
 
 `resume_optimization_usage`
 
-Fields:
+字段建议：
 
 - `id`
-- `userId` nullable for guest if needed
-- `guestId` nullable
-- `type`: `guest_partial | free_full`
+- `userId`：登录用户 ID，可为空
+- `guestId`：游客 ID，可为空
+- `type`：`guest_partial | free_full`
 - `model`
 - `targetRole`
 - `createdAt`
 
-This table prevents the free logged-in experience from being reused indefinitely and gives product analytics later.
+用途：
 
-If we want to avoid migrations in the first internal demo, we can temporarily track logged-in usage in local storage, but production V1 should use DB.
+- 防止游客重复刷体验
+- 防止登录用户重复使用完整免费体验
+- 后续做产品分析和转化漏斗
 
-## File Parsing
+如果只做内部 demo，可以先用 cookie + localStorage 做临时限制；但正式 V1 应该使用数据库记录。
 
-Use server-side parsing.
+## 文件解析
 
-Expected approach:
+文件解析在服务端完成。
 
-- DOCX: extract document text using a Node package or bundled runtime library
-- PDF: extract text using a Node package or a lightweight local parser
-- Keep parsed text only in memory for V1 unless result history is explicitly added
-- Enforce file size limit, recommended 10 MB
-- Reject unsupported file types clearly
+要求：
 
-## Error Handling
+- 最大文件大小建议 10 MB
+- 只接受 `.docx` 和 `.pdf`
+- 不在 V1 存储原始文件
+- 解析出的文本只用于本次生成
+- 解析失败时不阻塞流程，前端引导用户手动粘贴文本
 
-User-facing errors should be plain and actionable:
+实现建议：
 
-- Missing target role: “请选择或填写目标岗位”
-- Missing resume: “请粘贴简历文本，或上传 Word/PDF 简历”
-- Parse failed: “文件解析失败，你可以直接粘贴简历文本继续”
-- AI timeout: “生成时间较长，请稍后重试”
-- Invalid AI JSON: “生成结果格式异常，请重试”
-- Free usage exhausted: “你的免费完整体验已使用，深度精修将在下一版开放”
+- DOCX：使用 Node 侧文档解析库提取文本
+- PDF：使用 Node 侧 PDF 文本解析库提取文本
+- 解析逻辑独立封装，方便后续替换
 
-Backend should not log resume full text in production.
+## 错误处理
 
-## Privacy and Safety
+用户看到的错误要直接、可操作：
 
-- API key stays server-side
-- Do not store uploaded resume files in V1
-- Avoid logging raw resume/JD text
-- Add copy explaining that AI may make mistakes and users should verify facts before delivery
-- Facts inferred by AI must be shown separately under confirmation notes when the advanced switch is enabled
+- 未填写目标岗位：`请选择或填写目标岗位`
+- 未提供简历：`请粘贴简历文本，或上传 Word/PDF 简历`
+- 文件解析失败：`文件解析失败，你可以直接粘贴简历文本继续`
+- AI 生成超时：`生成时间较长，请稍后重试`
+- AI 返回格式异常：`生成结果格式异常，请重试`
+- 免费完整体验已用完：`你的免费完整体验已使用，深度精修将在下一版开放`
 
-## Testing
+生产环境后端不记录完整简历和 JD 原文。
 
-Minimum tests/checks:
+## 隐私与安全
 
-- Guest partial flow returns no full resume
-- Logged-in free flow returns full diagnosis and optimized resume
-- Target role is required
-- JD is optional
-- Advanced inferred metrics switch affects prompt and output expectations
-- DOCX/PDF parse failure returns fallback-safe error
-- Evolink errors surface as readable messages
-- API key is not exposed to client bundle
+- Evolink API key 只在服务端环境变量中使用
+- 浏览器端不得出现 API key
+- V1 不存储上传的原始简历文件
+- 默认不记录完整简历原文
+- 页面提示用户：AI 结果可能有误，投递前请自行核对事实
+- 开启“补充需确认量化指标”后，所有推断内容必须单独列到“需本人确认”
 
-Manual QA:
+## 测试范围
 
-- Paste Chinese resume without JD
-- Paste Chinese resume with JD
-- Upload DOCX
-- Upload PDF
-- Try as guest twice
-- Try as logged-in user after free usage is consumed
+最低测试项：
 
-## V2 Backlog
+- 游客只返回部分诊断，不返回完整简历
+- 游客第二次体验被拦截或引导登录
+- 登录用户第一次返回完整诊断和完整优化简历
+- 登录用户第二次完整体验被拦截
+- 目标岗位为空时返回错误
+- JD 为空时仍可生成
+- 开启“补充需确认量化指标”后，结果包含 `facts_to_confirm`
+- DOCX 上传解析成功
+- PDF 上传解析成功
+- 文件解析失败时可手动粘贴继续
+- Evolink 错误能返回可读提示
+- API key 不进入前端 bundle
 
-- Claude Sonnet 5 deep refinement
-- Credits/payment integration
-- Word DOCX export with verified layout
-- Recruiter greeting generation
-- Recruitment platform profile optimization
-- Multiple resume versions per target role
-- Admin prompt management
-- Full before/after diff
-- Resume history and deletion controls
+人工验收用例：
+
+- 粘贴中文简历，无 JD
+- 粘贴中文简历，有 JD
+- 上传 DOCX 简历
+- 上传 PDF 简历
+- 游客连续尝试两次
+- 登录用户使用完整免费体验后再次尝试
+
+## V2 待办
+
+- Claude Sonnet 5 深度精修
+- ShipAny credits 积分系统
+- 支付和积分包
+- Word DOCX 导出
+- PDF 导出
+- 招聘平台打招呼话术
+- 招聘平台个人资料优化
+- 针对不同岗位生成多个简历版本
+- 后台 prompt 管理
+- 完整左右对比 diff
+- 简历历史记录和删除控制
