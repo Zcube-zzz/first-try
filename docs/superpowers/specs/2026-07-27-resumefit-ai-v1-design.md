@@ -16,7 +16,7 @@ Primary reference: Resume Worded style homepage conversion pattern, with the res
 ## V1 Goals
 
 - Turn the current ShipAny scaffold into a resume-focused SaaS product.
-- Put the resume upload and target role/JD input in the homepage hero.
+- Put only the product name, resume upload entry, and diagnosis-to-rewrite animation in the homepage hero.
 - Diagnose resume-to-role fit with a clear score and actionable issues.
 - Generate an improved resume from user resume text plus role/JD context.
 - Let users choose a resume template and writing style before generation.
@@ -27,14 +27,15 @@ Primary reference: Resume Worded style homepage conversion pattern, with the res
 ## V1 User Flow
 
 1. User opens the homepage.
-2. Hero shows a resume upload panel, target role input, optional JD textarea, and paste-text fallback.
+2. Hero shows the product name, a resume upload panel, paste-text fallback, and a diagnosis-to-rewrite animation.
 3. User uploads `.pdf`, `.docx`, `.png`, `.jpg`, or `.jpeg`, or pastes resume text directly.
 4. Server parses the file and returns extracted text plus parsing confidence.
-5. User chooses a resume template and writing style.
-6. User clicks diagnose or optimize.
-7. The diagnosis result shows match score, strengths, gaps, keyword misses, section issues, and next action.
-8. The optimize result shows a complete rewritten resume, change notes, and facts that require user confirmation.
-9. Guest users can receive a partial diagnosis; logged-in users receive the full diagnosis and one full free optimization experience in V1.
+5. User provides target role or optional JD in the post-upload flow.
+6. User chooses a resume template and writing style.
+7. User clicks diagnose or optimize.
+8. The diagnosis result shows match score, strengths, gaps, keyword misses, section issues, and next action.
+9. The optimize result shows a complete rewritten resume, change notes, and facts that require user confirmation.
+10. Guest users can receive a partial diagnosis; logged-in users receive the full diagnosis and one full free optimization experience in V1.
 
 ## Page And Navigation Scope
 
@@ -44,13 +45,13 @@ The homepage becomes the product surface, not a generic marketing page.
 
 Hero content:
 
-- Brand promise: upload a resume and compare it with a JD or target role.
+- Product name and concise brand promise.
 - File upload zone in first viewport.
-- Target role input.
-- Optional JD textarea.
 - Paste resume text fallback.
-- Primary action for diagnosis.
-- Secondary action for template/style preview.
+- Primary upload/start action.
+- Animated demo showing diagnosis, score, optimization click, struck-through old text, replacement text, and a rising score.
+
+Do not place target role input, JD textarea, template selection, style selection, feature cards, pricing cards, FAQ, or dense navigation in the first viewport. Those belong in the post-upload flow or below-fold landing sections.
 
 Landing sections after hero:
 
@@ -360,8 +361,8 @@ Use existing UI primitives from `src/shared/components/ui`.
 
 Homepage integration:
 
-- Prefer adding the resume optimizer block directly to the landing page hero section.
-- If the theme hero block cannot host the upload UI cleanly, add a custom `resume-hero` section/block and wire it into the landing page config.
+- Add a custom `resume-hero` section/block for the first viewport. It should contain only the product name, upload/paste entry, primary upload action, and animated diagnosis-to-rewrite demo.
+- The full `resume-optimizer` flow should appear after upload or in a below-fold interaction step where target role/JD, template, style, diagnosis, and rewrite states can expand without crowding the hero.
 
 ## Error Handling
 
