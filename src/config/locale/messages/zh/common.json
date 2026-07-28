@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "ShipAny 模板二",
-    "description": "ShipAny 是用于构建 AI SaaS 创业项目的 NextJS 脚手架。提供丰富模板和组件，助您快速上线产品。",
-    "keywords": "shipany, shipany-boilerplate, shipany-template-two-demo"
+    "title": "简历精修 AI - AI 简历诊断与自动优化",
+    "description": "简历精修 AI 帮你上传简历、诊断岗位匹配度，并根据目标岗位生成更适合投递的优化版简历。",
+    "keywords": "简历优化, 简历诊断, AI 简历修改, JD 匹配, ATS 简历, 求职简历"
   },
   "sign": {
     "sign_in_title": "登录",

@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "ShipAny Template Two",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
-    "keywords": "shipany, shipany-boilerplate, shipany-template-two-demo"
+    "title": "ResumeFit AI - AI Resume Diagnosis And Rewrite",
+    "description": "ResumeFit AI helps users upload resumes, diagnose role fit, and generate stronger application-ready resume versions.",
+    "keywords": "resume optimization, resume diagnosis, AI resume editor, JD matching, ATS resume, resume rewrite"
   },
   "sign": {
     "sign_in_title": "Sign In",
