@@ -22,11 +22,26 @@ const nextConfig = {
       : 'standalone',
   reactStrictMode: false,
   serverExternalPackages: [
+    'mammoth',
     'pdf-parse',
     '@napi-rs/canvas',
     'sharp',
     'tesseract.js',
   ],
+  // Local credentials and retained QA evidence are never runtime dependencies.
+  outputFileTracingExcludes: {
+    '/*': ['.git/**/*', '.env*', '.dev.vars*', '.tmp/**/*', 'outputs/**/*'],
+  },
+  outputFileTracingIncludes: {
+    '/api/resume/parse': [
+      './node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs',
+      './node_modules/.pnpm/pdf-parse@*/node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs',
+      './node_modules/@napi-rs/canvas*/**/*',
+      './node_modules/.pnpm/@napi-rs+canvas*/node_modules/@napi-rs/canvas*/**/*',
+      './node_modules/tesseract.js-core/*.wasm',
+      './node_modules/.pnpm/tesseract.js-core@*/node_modules/tesseract.js-core/*.wasm',
+    ],
+  },
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

@@ -1,13 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
-import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { ResumeExtractionResult } from './types';
 
 const maxFileSize = 10 * 1024 * 1024;
-const nodeRequire = createRequire(import.meta.url);
 
 interface ResumeVisionConfig {
   apiKey: string;
@@ -149,8 +147,8 @@ function chatCompletionsUrl(baseUrl: string) {
 }
 
 function getPdfParse() {
-  return (nodeRequire('pdf-parse') as { PDFParse: PdfParseConstructor })
-    .PDFParse;
+  // A literal require keeps the external CJS entry traceable without tracing import.meta.url.
+  return (require('pdf-parse') as { PDFParse: PdfParseConstructor }).PDFParse;
 }
 
 function dataUrlToBuffer(dataUrl: string) {
@@ -429,10 +427,11 @@ async function dataUrlToTempImageFile(
   directory: string
 ): Promise<OcrTempImageFile> {
   const isPng = getDataUrlMimeType(dataUrl) === 'image/png';
-  const filePath = path.join(
-    directory,
-    `${randomUUID()}.${isPng ? 'jpg' : getDataUrlExtension(dataUrl)}`
-  );
+  // Runtime output paths must not become Turbopack input-directory globs.
+  const filePath = path.format({
+    dir: directory,
+    base: `${randomUUID()}.${isPng ? 'jpg' : getDataUrlExtension(dataUrl)}`,
+  });
   const ocrImage = await imageDataUrlToOcrBuffer(dataUrl);
   await writeFile(filePath, ocrImage.buffer);
   return {
@@ -453,11 +452,15 @@ async function callLocalOcrForResumeText(
     const tesseract = (await import('tesseract.js')) as any;
     const cachePath =
       process.env.RESUMEFIT_OCR_CACHE_PATH ||
-      path.join(tmpdir(), 'resumefit-tesseract-cache');
+      path.format({ dir: tmpdir(), base: 'resumefit-tesseract-cache' });
     await mkdir(cachePath, { recursive: true });
 
     const worker = await tesseract.createWorker(getLocalOcrLanguages(), 1, {
       cachePath,
+      // Trace the worker's own dependencies, not just its entry file.
+      workerPath: require.resolve(
+        'tesseract.js/src/worker-script/node/index.js'
+      ),
       errorHandler: () => undefined,
       logger: () => undefined,
     });
