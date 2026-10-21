@@ -12,6 +12,19 @@ const withNextIntl = createNextIntlPlugin({
   requestConfig: './src/core/i18n/request.ts',
 });
 
+// Netlify runs glibc Linux. Its adapter's musl filter only covers pnpm's
+// isolated layout, so apply it to hoisted dependencies as well.
+const netlifyNativeExcludes =
+  process.env.NETLIFY === 'true' &&
+  process.platform === 'linux' &&
+  process.report.getReport().header.glibcVersionRuntime
+    ? [
+        '**/node_modules/@napi-rs/canvas-linux-*-musl/**/*',
+        '**/node_modules/@img/*linuxmusl*/**/*',
+        '**/node_modules/@libsql/*musl*/**/*',
+      ]
+    : [];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // pnpm standalone tracing creates symlinks that require extra Windows rights.
@@ -30,14 +43,26 @@ const nextConfig = {
   ],
   // Local credentials and retained QA evidence are never runtime dependencies.
   outputFileTracingExcludes: {
-    '/*': ['.git/**/*', '.env*', '.dev.vars*', '.tmp/**/*', 'outputs/**/*'],
+    '/*': [
+      '.git/**/*',
+      '.env*',
+      '.dev.vars*',
+      '.tmp/**/*',
+      'outputs/**/*',
+      // Keep the pnpm lookup copy below; copying its physical-package aliases
+      // as well triples the same Canvas binary in standalone output.
+      'node_modules/.pnpm/*/node_modules/@napi-rs/canvas*/**/*',
+      ...netlifyNativeExcludes,
+    ],
+    'next-server': netlifyNativeExcludes,
   },
   outputFileTracingIncludes: {
     '/api/resume/parse': [
       './node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs',
       './node_modules/.pnpm/pdf-parse@*/node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs',
       './node_modules/@napi-rs/canvas*/**/*',
-      './node_modules/.pnpm/@napi-rs+canvas*/node_modules/@napi-rs/canvas*/**/*',
+      // Use one pnpm lookup location, not every alias of the same native binary.
+      './node_modules/.pnpm/node_modules/@napi-rs/canvas*/**/*',
       './node_modules/tesseract.js-core/*.wasm',
       './node_modules/.pnpm/tesseract.js-core@*/node_modules/tesseract.js-core/*.wasm',
     ],
