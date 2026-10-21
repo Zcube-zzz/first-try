@@ -8,6 +8,11 @@
     "nav": {
       "items": [
         {
+          "title": "Start",
+          "url": "/resume",
+          "icon": "UploadCloud"
+        },
+        {
           "title": "Features",
           "url": "/#features",
           "icon": "Sparkles"
@@ -58,6 +63,11 @@
         {
           "title": "Product",
           "children": [
+            {
+              "title": "Start",
+              "url": "/resume",
+              "target": "_self"
+            },
             {
               "title": "Features",
               "url": "/#features",

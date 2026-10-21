@@ -11,6 +11,8 @@ const requestSchema = z.object({
   jdText: z.string().trim().optional(),
   templateId: z.string().trim().optional(),
   styleId: z.string().trim().optional(),
+  layoutTemplateId: z.string().trim().optional(),
+  visualThemeId: z.string().trim().optional(),
   locale: z.enum(['zh', 'en']).optional(),
 });
 

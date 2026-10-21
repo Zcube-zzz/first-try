@@ -29,7 +29,9 @@ We may process the following information:
 
 ## Resume And JD Handling
 
-In V1, uploaded files and text are processed for the current request. We do not store raw resumes, raw JDs, or complete optimized resume bodies by default. We do not use your uploaded content to train models.
+Resume, JD, and workflow data are temporarily stored in the current browser tab's `sessionStorage` to preserve progress between upload, diagnosis, and optimization pages; browsers typically clear this data when the tab session ends. The application does not write resume text or JDs to its business database or application logs. Diagnosis and optimization requests send the necessary resume and job content to the configured AI service provider. The provider's own data-use and retention terms apply. ResumeFit AI does not use uploaded content to train its own models.
+
+The system must not add metrics, scope, outcomes, or other facts that were not provided in the resume. If information is insufficient, it preserves the original meaning and lists details that you may need to provide or verify in the confirmation section.
 
 If AI infers metrics, scope, outcomes, or facts from context, those items are separated into a facts-to-confirm list so you can verify them before use.
 

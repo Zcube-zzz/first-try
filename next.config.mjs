@@ -14,8 +14,19 @@ const withNextIntl = createNextIntlPlugin({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: process.env.VERCEL ? undefined : 'standalone',
+  // pnpm standalone tracing creates symlinks that require extra Windows rights.
+  // Native Windows uses next start; Linux self-hosting keeps standalone output.
+  output:
+    process.env.VERCEL || process.platform === 'win32'
+      ? undefined
+      : 'standalone',
   reactStrictMode: false,
+  serverExternalPackages: [
+    'pdf-parse',
+    '@napi-rs/canvas',
+    'sharp',
+    'tesseract.js',
+  ],
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

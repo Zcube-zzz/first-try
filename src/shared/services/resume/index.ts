@@ -5,3 +5,4 @@ export * from './model';
 export * from './prompts';
 export * from './templates';
 export * from './types';
+export * from './visual-templates';

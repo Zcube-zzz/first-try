@@ -30,12 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env
-.env.local
-.env.development
-.env.test
-.env.production
+# Local credentials stay out of every environment-specific variant.
+.env*
+!.env.example
+
+# Local QA runners, temporary services, and retained test evidence.
+/.tmp/
+/outputs/
 
 # vercel
 .vercel

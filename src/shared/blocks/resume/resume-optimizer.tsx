@@ -1,7 +1,6 @@
 'use client';
 
-import { ChangeEvent, useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
+import { ChangeEvent, useMemo, useState, type ReactNode } from 'react';
 import {
   AlertCircle,
   ArrowUpRight,
@@ -15,6 +14,10 @@ import {
 import { Button } from '@/shared/components/ui/button';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { cn } from '@/shared/lib/utils';
+import {
+  formatResumeSlotLabels,
+  getResumeFillInFields,
+} from '@/shared/services/resume/draft';
 import {
   RESUME_REWRITE_STYLES,
   RESUME_TEMPLATES,
@@ -189,7 +192,7 @@ export function ResumeOptimizer({
       >
         <input
           type="file"
-          accept=".pdf,.docx,.png,.jpg,.jpeg,.txt,.md"
+          accept=".pdf,.docx,.txt,.md"
           className="sr-only"
           onChange={parseFile}
         />
@@ -325,18 +328,59 @@ export function ResumeOptimizer({
       {optimization ? (
         <ResultPanel title={text.optimizedTitle}>
           <p className="text-muted-foreground text-sm">
-            {optimization.summary}
+            {formatResumeSlotLabels(
+              optimization.summary,
+              optimization.slots,
+              locale
+            )}
           </p>
-          <pre className="mt-3 max-h-80 overflow-auto rounded-md bg-slate-950 p-4 text-sm whitespace-pre-wrap text-white">
-            {optimization.rewrittenResume}
-          </pre>
-          <BulletList items={optimization.changeNotes} />
+          <Textarea
+            aria-label={
+              locale === 'zh'
+                ? '简历草稿（可直接编辑）'
+                : 'Editable resume draft'
+            }
+            value={optimization.rewrittenResume}
+            onChange={(event) =>
+              setOptimization({
+                ...optimization,
+                rewrittenResume: event.target.value,
+              })
+            }
+            className="mt-3 min-h-[34rem] resize-y bg-white text-sm leading-7 dark:bg-zinc-950"
+          />
+          {getResumeFillInFields(optimization.rewrittenResume).length > 0 ? (
+            <p role="status" className="mt-2 text-sm text-amber-700">
+              {locale === 'zh'
+                ? '请本人填写【待填写：字段】中的真实数据，填好或删除相应表达后再投递。'
+                : 'Replace fill-in markers with verified data, or remove the incomplete statements before applying.'}
+            </p>
+          ) : null}
+          <BulletList
+            items={optimization.changeNotes.map((note) =>
+              formatResumeSlotLabels(note, optimization.slots, locale)
+            )}
+          />
           <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-100">
             <div className="mb-2 flex items-center gap-2 font-medium">
               <AlertCircle className="size-4" />
               {text.factsTitle}
             </div>
-            <BulletList items={optimization.factsToConfirm} />
+            <BulletList
+              items={
+                optimization.confirmationItems?.length
+                  ? optimization.confirmationItems.map((item) =>
+                      formatResumeSlotLabels(
+                        `${item.item} ${item.reason}`,
+                        optimization.slots,
+                        locale
+                      )
+                    )
+                  : optimization.factsToConfirm.map((item) =>
+                      formatResumeSlotLabels(item, optimization.slots, locale)
+                    )
+              }
+            />
           </div>
         </ResultPanel>
       ) : null}
@@ -503,7 +547,7 @@ function getDefaults(locale: 'zh' | 'en'): Required<ResumeOptimizerCopy> {
   if (locale === 'en') {
     return {
       uploadTitle: 'Upload resume',
-      uploadHint: 'PDF / DOCX / image / text, up to 10MB',
+      uploadHint: 'PDF / DOCX / text, up to 10MB',
       pasteLabel: 'Paste resume text here if extraction needs review',
       targetLabel: 'Target role',
       targetPlaceholder: 'e.g. Growth Product Manager',
@@ -524,7 +568,7 @@ function getDefaults(locale: 'zh' | 'en'): Required<ResumeOptimizerCopy> {
 
   return {
     uploadTitle: '上传简历',
-    uploadHint: '支持 PDF / DOCX / 图片 / 文本，最大 10MB',
+    uploadHint: '支持 PDF / DOCX / 文本，最大 10MB',
     pasteLabel: '如果识别结果需要调整，也可以直接粘贴简历文本',
     targetLabel: '目标岗位',
     targetPlaceholder: '例如：增长产品经理',

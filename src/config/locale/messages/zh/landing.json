@@ -8,6 +8,11 @@
     "nav": {
       "items": [
         {
+          "title": "开始使用",
+          "url": "/resume",
+          "icon": "UploadCloud"
+        },
+        {
           "title": "功能",
           "url": "/#features",
           "icon": "Sparkles"
@@ -58,6 +63,11 @@
         {
           "title": "产品",
           "children": [
+            {
+              "title": "开始使用",
+              "url": "/resume",
+              "target": "_self"
+            },
             {
               "title": "功能",
               "url": "/#features",

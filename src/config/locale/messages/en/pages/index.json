@@ -1,25 +1,18 @@
 {
   "page": {
-    "show_sections": [
-      "hero",
-      "introduce",
-      "features",
-      "usage",
-      "faq",
-      "cta"
-    ],
+    "show_sections": ["hero", "introduce", "features", "usage", "faq", "cta"],
     "sections": {
       "hero": {
         "block": "resume-hero",
         "id": "hero",
         "locale": "en",
-        "label": "AI Resume Diagnosis And Rewrite",
+        "label": "RESUMEFIT AI · RESUME DIAGNOSIS & REWRITE",
         "title": "ResumeFit AI",
-        "subtitle": "AI Resume Editor",
-        "description": "Upload your resume. AI diagnoses role fit first, then helps rewrite a stronger version for applications.",
+        "subtitle": "Make your strengths stand out",
+        "description": "Upload your resume, match it to a target role, uncover the gaps, and turn your real experience into a stronger application.",
         "optimizer_copy": {
           "uploadTitle": "Upload resume",
-          "uploadHint": "PDF / DOCX / image / text, up to 10MB",
+          "uploadHint": "PDF / DOCX / text, up to 10MB",
           "pasteLabel": "Paste resume text here if extraction needs review",
           "targetLabel": "Target role",
           "targetPlaceholder": "e.g. Growth Product Manager",
@@ -62,38 +55,96 @@
       },
       "features": {
         "id": "features",
+        "block": "resume-feature-showcase",
+        "label": "Enter workspace",
         "title": "Built for resume applications",
         "description": "A focused workflow for resume diagnosis, JD matching, ATS readability, and rewrite guidance.",
         "items": [
           {
-            "title": "PDF / DOCX / image upload",
-            "description": "Handle common resume formats. Text PDFs and DOCX files can be extracted directly; image resumes use recognition fallback.",
-            "icon": "FileText"
+            "title": "PDF / DOCX / text upload",
+            "description": "Handle mainstream resume formats. Text PDFs and DOCX files can be extracted directly, or users can paste plain text.",
+            "icon": "FileText",
+            "url": "/resume",
+            "preview": {
+              "label": "Upload entry",
+              "title": "Start by adding the resume",
+              "description": "Users can upload a file or paste text. After extraction, they continue to diagnosis.",
+              "items": ["Upload file", "Extract text", "Confirm content"],
+              "cta": "Open upload page"
+            }
           },
           {
             "title": "JD keyword analysis",
             "description": "Identify role skills, business context, and missing keywords from the target job description.",
-            "icon": "ListChecks"
+            "icon": "ListChecks",
+            "url": "/resume/diagnose",
+            "preview": {
+              "label": "Diagnosis page",
+              "title": "Score fit against the role",
+              "description": "Add a target role or JD to get a score, keyword matches, and gaps.",
+              "items": ["Read JD", "Match keywords", "Generate score"],
+              "cta": "Open diagnosis"
+            }
           },
           {
             "title": "ATS-friendly structure",
             "description": "Improve headings, keywords, structure, and readability for screening systems and recruiters.",
-            "icon": "BadgeCheck"
+            "icon": "BadgeCheck",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "Optimization page",
+              "title": "Rewrite for the application context",
+              "description": "Use diagnosis results to improve structure, keywords, and recruiter readability.",
+              "items": ["Choose template", "Choose style", "Generate version"],
+              "cta": "Open optimization"
+            }
           },
           {
             "title": "Resume templates",
             "description": "Cover campus, experienced hire, product manager, AI product manager, and engineering use cases.",
-            "icon": "LayoutTemplate"
+            "icon": "LayoutTemplate",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "Template choice",
+              "title": "Choose structure before generation",
+              "description": "Different roles need different resume structures, not one generic AI rewrite.",
+              "items": ["Campus", "Experienced", "Product / Engineering"],
+              "cta": "Choose template"
+            }
           },
           {
             "title": "Rewrite styles",
             "description": "Choose fact-preserving, ATS-friendly, achievement-focused, or enterprise Chinese style.",
-            "icon": "SlidersHorizontal"
+            "icon": "SlidersHorizontal",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "Style choice",
+              "title": "Pick the rewrite style",
+              "description": "Users can choose conservative polishing, keyword strengthening, or achievement-focused rewriting.",
+              "items": [
+                "Fact-preserving",
+                "ATS-friendly",
+                "Achievement-focused"
+              ],
+              "cta": "Choose style"
+            }
           },
           {
             "title": "Before/after clarity",
             "description": "Show what changed and why, so users understand the rewrite instead of blindly copying it.",
-            "icon": "ArrowUpRight"
+            "icon": "ArrowUpRight",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "Comparison view",
+              "title": "See what changed and why",
+              "description": "Weak wording is marked, stronger wording appears, and the change rationale stays visible.",
+              "items": [
+                "Mark old text",
+                "Generate new text",
+                "Explain changes"
+              ],
+              "cta": "View rewrite flow"
+            }
           }
         ],
         "className": "bg-muted/40"
@@ -107,7 +158,7 @@
         "items": [
           {
             "title": "Upload resume",
-            "description": "Upload PDF, DOCX, image, or paste resume text directly.",
+            "description": "Upload PDF, DOCX, or paste resume text directly.",
             "icon": "UploadCloud"
           },
           {
@@ -134,7 +185,7 @@
         "items": [
           {
             "question": "Will it invent my experience?",
-            "answer": "No. ResumeFit AI is designed to preserve facts. Any inferred metric, scope, or outcome is placed in a facts-to-confirm list."
+            "answer": "ResumeFit AI must not add metrics, scope, outcomes, or experience not present in your resume. When information is missing, it preserves the original meaning and asks you to provide or verify details."
           },
           {
             "question": "Can I use it without a full JD?",
@@ -142,11 +193,11 @@
           },
           {
             "question": "Which formats are supported?",
-            "answer": "V1 supports PDF, DOCX, image, and text. Text PDFs and DOCX files can be extracted directly; scanned PDFs and images use recognition or pasted text fallback."
+            "answer": "V1 supports PDF, DOCX, and text. Text PDFs and DOCX files can be extracted directly; if a file cannot be extracted, paste the resume text to continue."
           },
           {
             "question": "Are uploads used for training?",
-            "answer": "No. V1 processes resume and JD content only for the current request, does not store raw content, and does not use uploads for training."
+            "answer": "ResumeFit AI does not use uploads to train its own models or write resume text/JDs to its business database. Content is temporarily held in this browser tab and sent to the configured AI service provider for diagnosis or optimization; the provider's own data-use and retention terms apply. Avoid uploading sensitive details."
           }
         ]
       },
@@ -157,7 +208,7 @@
         "buttons": [
           {
             "title": "Back to upload",
-            "url": "/#hero",
+            "url": "/resume/diagnose",
             "target": "_self",
             "icon": "UploadCloud"
           }

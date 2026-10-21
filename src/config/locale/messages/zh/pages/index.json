@@ -1,25 +1,18 @@
 {
   "page": {
-    "show_sections": [
-      "hero",
-      "introduce",
-      "features",
-      "usage",
-      "faq",
-      "cta"
-    ],
+    "show_sections": ["hero", "introduce", "features", "usage", "faq", "cta"],
     "sections": {
       "hero": {
         "block": "resume-hero",
         "id": "hero",
         "locale": "zh",
-        "label": "AI 简历诊断与精修",
+        "label": "简历精修 AI · 智能诊断与改写",
         "title": "简历精修 AI",
-        "subtitle": "ResumeFit AI",
-        "description": "上传简历，AI 先诊断岗位匹配度，再帮你优化成更适合投递的版本。",
+        "subtitle": "让优势被看见",
+        "description": "上传简历，匹配目标岗位，找出关键差距，再把真实经历打磨成更有说服力的表达。",
         "optimizer_copy": {
           "uploadTitle": "上传简历",
-          "uploadHint": "支持 PDF / DOCX / 图片 / 文本，最大 10MB",
+          "uploadHint": "支持 PDF / DOCX / 文本，最大 10MB",
           "pasteLabel": "如果识别结果需要调整，也可以直接粘贴简历文本",
           "targetLabel": "目标岗位",
           "targetPlaceholder": "例如：增长产品经理",
@@ -55,45 +48,95 @@
           },
           {
             "title": "事实确认",
-            "description": "AI 推断的数字、规模和结果会单独列出，提醒用户确认后再投递。",
+            "description": "不会补造简历未提供的数字；需要补充或核实的信息会单独列出。",
             "icon": "ShieldCheck"
           }
         ]
       },
       "features": {
         "id": "features",
+        "block": "resume-feature-showcase",
+        "label": "进入使用页面",
         "title": "为求职投递设计的核心能力",
         "description": "不是通用聊天框，而是一套围绕简历诊断、岗位匹配和简历精修的工作流。",
         "items": [
           {
-            "title": "PDF / DOCX / 图片上传",
-            "description": "支持常见简历格式，文本型 PDF 和 DOCX 可直接提取文字，图片简历可进入识别兜底流程。",
-            "icon": "FileText"
+            "title": "PDF / DOCX / 文本上传",
+            "description": "支持主流简历格式，文本型 PDF 和 DOCX 可直接提取文字，也可以粘贴纯文本继续。",
+            "icon": "FileText",
+            "url": "/resume",
+            "preview": {
+              "label": "上传入口",
+              "title": "先把简历放进工作台",
+              "description": "用户可以上传文件，也可以先粘贴文本。识别完成后进入诊断页。",
+              "items": ["上传文件", "提取文本", "确认内容"],
+              "cta": "进入上传页"
+            }
           },
           {
             "title": "JD 关键词分析",
             "description": "从岗位描述中识别技能、业务场景和能力要求，找出简历里的缺口。",
-            "icon": "ListChecks"
+            "icon": "ListChecks",
+            "url": "/resume/diagnose",
+            "preview": {
+              "label": "诊断页面",
+              "title": "匹配岗位要求并给出评分",
+              "description": "填写目标岗位或粘贴 JD 后，系统会输出匹配分、命中关键词和缺口。",
+              "items": ["读取 JD", "匹配关键词", "生成评分"],
+              "cta": "进入诊断页"
+            }
           },
           {
             "title": "ATS 友好优化",
             "description": "强化标题、关键词、结构和可读性，让简历更适合机器筛选和人工快速浏览。",
-            "icon": "BadgeCheck"
+            "icon": "BadgeCheck",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "优化页面",
+              "title": "按投递场景改写简历",
+              "description": "根据诊断结果增强结构、关键词和表达，让简历更适合筛选和人工阅读。",
+              "items": ["选择模板", "选择风格", "生成新版本"],
+              "cta": "进入优化页"
+            }
           },
           {
             "title": "多模板选择",
             "description": "覆盖校招、社招、产品经理、AI 产品经理、技术岗等常见投递场景。",
-            "icon": "LayoutTemplate"
+            "icon": "LayoutTemplate",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "模板选择",
+              "title": "先选简历结构，再开始生成",
+              "description": "不同岗位使用不同的简历组织方式，避免所有用户生成同一种文案。",
+              "items": ["校招", "社招", "产品/技术岗"],
+              "cta": "选择模板"
+            }
           },
           {
             "title": "多种修改风格",
             "description": "支持保守事实型、ATS 友好型、成果强化型和中文大厂型表达。",
-            "icon": "SlidersHorizontal"
+            "icon": "SlidersHorizontal",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "风格选择",
+              "title": "按求职方向选择修改风格",
+              "description": "用户可以选择更保守、更强调关键词，或更突出成果的修改方式。",
+              "items": ["保守事实", "ATS 友好", "成果强化"],
+              "cta": "选择风格"
+            }
           },
           {
             "title": "优化前后对比",
             "description": "展示原表达的问题和新表达的改写方向，让用户知道为什么这样改。",
-            "icon": "ArrowUpRight"
+            "icon": "ArrowUpRight",
+            "url": "/resume/optimize",
+            "preview": {
+              "label": "对比展示",
+              "title": "看见每一处修改的理由",
+              "description": "弱表达会被标出，新表达会逐步出现，帮助用户理解修改依据。",
+              "items": ["标出旧表达", "生成新表达", "展示修改原因"],
+              "cta": "查看优化对比"
+            }
           }
         ],
         "className": "bg-muted/40"
@@ -107,7 +150,7 @@
         "items": [
           {
             "title": "上传简历",
-            "description": "上传 PDF、DOCX、图片，或直接粘贴简历文本。",
+            "description": "上传 PDF、DOCX，或直接粘贴简历文本。",
             "icon": "UploadCloud"
           },
           {
@@ -134,7 +177,7 @@
         "items": [
           {
             "question": "会不会编造我的经历？",
-            "answer": "不会把编造经历作为产品能力。系统会尽量基于原始简历改写，AI 推断出的数字、规模或结果会进入“需要用户确认”列表。"
+        "answer": "不会新增简历未提供的经历或业绩数字。信息不足时会保留原意，并把需要补充或核实的内容放入“需要用户确认”列表。"
           },
           {
             "question": "没有完整 JD 可以用吗？",
@@ -142,11 +185,11 @@
           },
           {
             "question": "支持哪些简历格式？",
-            "answer": "V1 支持 PDF、DOCX、图片和文本。文本型 PDF 和 DOCX 可直接提取文字，扫描件和图片会提示使用识别或粘贴文本兜底。"
+            "answer": "V1 支持 PDF、DOCX 和文本。文本型 PDF 和 DOCX 可直接提取文字；如果文件无法提取，请粘贴简历文本继续。"
           },
           {
             "question": "上传内容会被用于训练吗？",
-            "answer": "不会。V1 只在本次请求中处理简历和 JD，不存储原始简历/JD，也不把用户内容用于训练。"
+            "answer": "本应用不会把内容用于自身训练，也不会写入业务数据库；简历和 JD 会在当前浏览器会话暂存，并发送至所配置的模型服务处理。第三方模型服务的数据使用和留存政策以其提供商说明为准，请勿上传敏感信息。"
           }
         ]
       },
@@ -157,7 +200,7 @@
         "buttons": [
           {
             "title": "回到上传区",
-            "url": "/#hero",
+            "url": "/resume/diagnose",
             "target": "_self",
             "icon": "UploadCloud"
           }
