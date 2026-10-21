@@ -15,15 +15,29 @@ const withNextIntl = createNextIntlPlugin({
 // Netlify runs glibc Linux. Its adapter's musl filter only covers pnpm's
 // isolated layout, so apply it to hoisted dependencies as well.
 const netlifyNativeExcludes =
-  process.env.NETLIFY === 'true' &&
-  process.platform === 'linux' &&
-  process.report.getReport().header.glibcVersionRuntime
+  process.env.NETLIFY === 'true' && process.platform === 'linux'
     ? [
         '**/node_modules/@napi-rs/canvas-linux-*-musl/**/*',
         '**/node_modules/@img/*linuxmusl*/**/*',
         '**/node_modules/@libsql/*musl*/**/*',
       ]
     : [];
+
+const canvasNativeIncludes =
+  process.platform === 'linux'
+    ? ['./node_modules/@napi-rs/canvas-linux-x64-gnu/**/*']
+    : ['./node_modules/@napi-rs/canvas-win32-x64-msvc/**/*'];
+const canvasPnpmNativeIncludes = canvasNativeIncludes.map((pattern) =>
+  pattern.replace('./node_modules/', './node_modules/.pnpm/node_modules/')
+);
+
+const runtimeTraceExcludes = [
+  '.git/**/*',
+  '.env*',
+  '.dev.vars*',
+  '.tmp/**/*',
+  'outputs/**/*',
+];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -44,25 +58,21 @@ const nextConfig = {
   // Local credentials and retained QA evidence are never runtime dependencies.
   outputFileTracingExcludes: {
     '/*': [
-      '.git/**/*',
-      '.env*',
-      '.dev.vars*',
-      '.tmp/**/*',
-      'outputs/**/*',
+      ...runtimeTraceExcludes,
       // Keep the pnpm lookup copy below; copying its physical-package aliases
       // as well triples the same Canvas binary in standalone output.
       'node_modules/.pnpm/*/node_modules/@napi-rs/canvas*/**/*',
       ...netlifyNativeExcludes,
     ],
-    'next-server': netlifyNativeExcludes,
+    'next-server': [...runtimeTraceExcludes, ...netlifyNativeExcludes],
   },
   outputFileTracingIncludes: {
     '/api/resume/parse': [
       './node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs',
       './node_modules/.pnpm/pdf-parse@*/node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs',
-      './node_modules/@napi-rs/canvas*/**/*',
+      ...canvasNativeIncludes,
       // Use one pnpm lookup location, not every alias of the same native binary.
-      './node_modules/.pnpm/node_modules/@napi-rs/canvas*/**/*',
+      ...canvasPnpmNativeIncludes,
       './node_modules/tesseract.js-core/*.wasm',
       './node_modules/.pnpm/tesseract.js-core@*/node_modules/tesseract.js-core/*.wasm',
     ],
