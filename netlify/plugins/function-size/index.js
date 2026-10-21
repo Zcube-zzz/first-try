@@ -66,8 +66,14 @@ module.exports = {
         JSON.stringify(largest)
       );
       if (bytes > limit) {
+        const largestSummary = largest
+          .slice(0, 3)
+          .map(
+            ({ name, bytes }) => `${name} (${(bytes / 1048576).toFixed(2)} MiB)`
+          )
+          .join('; ');
         return utils.build.failBuild(
-          `Next.js function is ${(bytes / 1048576).toFixed(2)} MiB; limit is 250 MiB. See [function-size] above.`
+          `Next.js function is ${(bytes / 1048576).toFixed(2)} MiB; limit is 250 MiB. Largest packaged files: ${largestSummary}`
         );
       }
     }

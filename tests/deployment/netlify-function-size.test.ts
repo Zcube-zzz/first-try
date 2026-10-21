@@ -41,7 +41,15 @@ async function main() {
     const centralDirectory = oversized.readUInt32LE(end + 16);
     oversized.writeUInt32LE(251 * 1048576, centralDirectory + 24);
     fs.writeFileSync(archive, oversized);
-    assert.throws(() => onPostBuild({ constants, utils }), /limit is 250 MiB/);
+    assert.throws(
+      () => onPostBuild({ constants, utils }),
+      (error: Error) => {
+        assert.match(error.message, /limit is 250 MiB/);
+        assert.match(error.message, /Largest packaged files:/);
+        assert.match(error.message, /\(251\.00 MiB\)/);
+        return true;
+      }
+    );
 
     fs.writeFileSync(archive, Buffer.from('invalid archive'));
     assert.throws(() => onPostBuild({ constants, utils }), /Invalid ZIP/);
