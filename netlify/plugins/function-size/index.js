@@ -35,6 +35,31 @@ function zipEntries(file) {
 }
 
 module.exports = {
+  onBuild({ constants, utils }) {
+    // Run after the Next adapter creates its manifest, before Netlify bundles
+    // functions. That manifest overrides included_files from netlify.toml.
+    const manifestPath = path.resolve(
+      constants.PACKAGE_PATH || '',
+      '.netlify/functions-internal/___netlify-server-handler/___netlify-server-handler.json'
+    );
+    if (!fs.existsSync(manifestPath)) {
+      return utils.build.failBuild(
+        'Next.js function manifest not found; the Next adapter must run before function-size.'
+      );
+    }
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const exclusions = [
+      '!**/.git{,/**}',
+      '!**/node_modules/@napi-rs/*linux-*-musl{,/**}',
+      '!**/node_modules/@img/*linuxmusl*{,/**}',
+      '!**/node_modules/@libsql/*musl*{,/**}',
+    ];
+    manifest.config.includedFiles = [
+      ...new Set([...manifest.config.includedFiles, ...exclusions]),
+    ];
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+    console.log('[function-size] Final bundle exclusions applied:', exclusions);
+  },
   onPostBuild({ constants, utils }) {
     const archives = [];
     function walk(dir) {
